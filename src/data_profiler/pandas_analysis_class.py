@@ -1,14 +1,16 @@
 import pandas as pd
 import snowflake.connector
-# from snowflake.connector.pandas_tools import write_pandas
+from snowflake.connector.pandas_tools import write_pandas
 from snowflake.connector.pandas_tools import pd_writer
+from sqlalchemy import create_engine
+from sqlalchemy.dialects import registry
 import numpy as np
 import time
 import datetime
 import os
 import sys
 sys.path.insert(0, 'C:/Users/Lenovo/Desktop/gambling/gambling_com_task_solution/src')
-
+registry.register('snowflake', 'snowflake.sqlalchemy','dialect')
 
 class pandas_analysis_class:
     '''A python class that has methods for data profiling and manipulation'''
@@ -18,7 +20,7 @@ class pandas_analysis_class:
 
     def read_dataframe(self) -> pd.DataFrame:
         '''Loads data into a pandas dataframe from defined input path'''
-        dataframe = pd.read_csv(self.input_dataset_location)
+        dataframe = pd.read_csv(self.input_dataset_location,index_col=False)
         return dataframe
 
 
@@ -98,9 +100,9 @@ class pandas_analysis_class:
             view['WIN'] = view['Home_team_Win']['sum'] + view['Away_team_Win']['sum']
             view['DRAW'] = view['Draw_h']['sum'] + view['Draw_a']['sum']
             view['LOSS'] = view['Home_team_Loss']['sum'] + view['Away_team_Loss']['sum']
-            view['GOAL_AGANIST'] = view['Home_team_Conceded']['sum'] + view['Away_team_Conceded']['sum']
-            view['GOAL_DIFFERENCE'] = view['GOALS_FOR'] - view['GOAL_AGANIST']
-            view = view[['POINTS','GOALS_FOR', "MATCHES_PLAYED",'WIN','DRAW','LOSS','GOAL_AGANIST','GOAL_DIFFERENCE']]
+            view['GOALS_AGAINST'] = view['Home_team_Conceded']['sum'] + view['Away_team_Conceded']['sum']
+            view['GOAL_DIFFERENCE'] = view['GOALS_FOR'] - view['GOALS_AGAINST']
+            view = view[['POINTS','GOALS_FOR', "MATCHES_PLAYED",'WIN','DRAW','LOSS','GOALS_AGAINST','GOAL_DIFFERENCE']]
             view = view.sort_values(by=['POINTS'], ascending = False)
             # Rename Club name 'Brighton'
             view = view.rename(update_values, axis=0)
@@ -108,14 +110,15 @@ class pandas_analysis_class:
             view['POSITION'] = view['POINTS'].rank(method='max',ascending = False).astype('Int64')
             view = view.rename_axis('CLUB')
             view['CLUB'] = view.index
-            view['primary_key'] = view.index
-            view = view[['POSITION','CLUB',"MATCHES_PLAYED",'WIN','DRAW','LOSS','GOALS_FOR','GOAL_AGANIST','GOAL_DIFFERENCE','POINTS','primary_key']]
-            view.reset_index(drop=True, inplace=True)
+            view['primary_key'] = view['CLUB']
+            view = view[['POSITION','CLUB',"MATCHES_PLAYED",'WIN','DRAW','LOSS','GOALS_FOR','GOALS_AGAINST','GOAL_DIFFERENCE','POINTS']]
+            # view_ni = pd.DataFrame(view,index=None)
+            # view.columns = map(lambda x: str(x).upper(), view.columns)
+            # view.rename(columns=''.join,inplace=True)
             # Saving output dataframe as CSV to defined path
             view.to_csv('table_chart.csv')
             return view
         else:
-            dataframe = dataframe
             # Remove rows with requested value
             remove_val_holding_cols = [dataframe[column].name for column in dataframe.columns if dataframe[column].isin([drop_values_rows]).any()]
             for col in remove_val_holding_cols:
@@ -149,9 +152,9 @@ class pandas_analysis_class:
             view['WIN'] = view['Home_team_Win']['sum'] + view['Away_team_Win']['sum']
             view['DRAW'] = view['Draw_h']['sum'] + view['Draw_a']['sum']
             view['LOSS'] = view['Home_team_Loss']['sum'] + view['Away_team_Loss']['sum']
-            view['GOAL_AGANIST'] = view['Home_team_Conceded']['sum'] + view['Away_team_Conceded']['sum']
-            view['GOAL_DIFFERENCE'] = view['GOALS_FOR'] - view['GOAL_AGANIST']
-            view = view[['POINTS','GOALS_FOR', "MATCHES_PLAYED",'WIN','DRAW','LOSS','GOAL_AGANIST','GOAL_DIFFERENCE']]
+            view['GOALS_AGAINST'] = view['Home_team_Conceded']['sum'] + view['Away_team_Conceded']['sum']
+            view['GOAL_DIFFERENCE'] = view['GOALS_FOR'] - view['GOALS_AGAINST']
+            view = view[['POINTS','GOALS_FOR', "MATCHES_PLAYED",'WIN','DRAW','LOSS','GOALS_AGAINST','GOAL_DIFFERENCE']]
             view = view.sort_values(by=['POINTS'], ascending = False)
             # Rename Club name 'Brighton'
             view = view.rename(update_values, axis=0)
@@ -159,9 +162,9 @@ class pandas_analysis_class:
             view['POSITION'] = view['POINTS'].rank(method='max',ascending = False).astype('Int64')
             view = view.rename_axis('CLUB')
             view['CLUB'] = view.index
-            view['primary_key'] = view.index
-            view = view[['POSITION','CLUB',"MATCHES_PLAYED",'WIN','DRAW','LOSS','GOALS_FOR','GOAL_AGANIST','GOAL_DIFFERENCE','POINTS','primary_key']]
-            view.reset_index(drop=True, inplace=True)
+            view['primary_key'] = view['CLUB']
+            view = view[['POSITION','CLUB','MATCHES_PLAYED','WIN','DRAW','LOSS','GOALS_FOR','GOALS_AGAINST','GOAL_DIFFERENCE','POINTS']]
+            # view.columns = map(lambda x: str(x).upper(), view.columns)
             return view
 
 
@@ -182,23 +185,57 @@ class snowflake_analysis_class(pandas_analysis_class):
         df_to_write = super().data_manipulator('Man City', {'Brighton' : 'Brighton & Hove Albion'})
         # Create a cursor from the connection variable
         ctx = snowflake.connector.connect(
-        user = f'{self.user}',
-        password = f'{self.password}',
-        account = f'{self.account}',
-        database = f'{self.database}',
-        schema = f'{self.schema}',
+        user = self.user,
+        password = self.password,
+        account = self.account,
+        database = self.database,
+        schema = self.schema,
         )
         cursor = ctx.cursor()
 
+        snowflake_username = self.user
+        snowflake_password = self.password
+        snowflake_account = self.account
+        # snowflake_warehouse = os.environ['SNOWFLAKE_WAREHOUSE']
+        snowflake_database = self.database
+        snowflake_schema = self.schema
+
+        engine = create_engine(f'snowflake://{self.user}:{self.password}@{self.account}/{self.database}/{self.schema}'.format(
+            user=snowflake_username,
+            password=snowflake_password,
+            account=snowflake_account,
+            db=snowflake_database,
+            schema=snowflake_schema,
+            # warehouse=snowflake_warehouse,
+        ))
+
+
         # Reading table names on database into read_tbl list
-        # cursor.execute("DELETE FROM TABLE DEVELOPER_SANDBOX.TECH_TEST.STANDINGS_10 WHERE CLUB = 'Man United'")                       WHERE CLUB IN ("Man United")")
-        # cursor.execute(f"SELECT * FROM {table_to_drop}")
-        myresult = cursor.fetchall()
-        print(myresult)
+        cursor.execute('DELETE FROM STANDINGS_10 WHERE CLUB IN (SELECT CLUB FROM STANDINGS_10)')
+        # myresult = cursor.fetchall()
+        # print(myresult)
         # print(df_to_write)
+        # df_source = pd.read_sql(f'SELECT * FROM {table_to_drop}', con = ctx)
+        # print(df_source)
+        # print(df_to_write.columns)
+        # df_write = pd.DataFrame(data=df_to_write,columns=df_source.columns)
+        # print(df_write)
         # source_data_df = df_to_write
+
+        df_to_write.columns = [''.join(x) for x in df_to_write.columns]
+
+        # print(df_to_write.columns)
+        # print(df_to_write)
         # # Write dataframe to target table
-        # write_pandas(ctx, source_data_df, table_to_drop, auto_create_table=True)
+        # df_to_write.to_sql('standings_10', con = engine, index = False, method=pd_writer, schema='TECH_TEST',  if_exists='append')
+        # CALISAN DRIVER BU
+        df_to_write.to_sql('standings_10',engine,index=False,method=pd_writer,if_exists='append')
+        # df_to_write.to_sql('standings_10', ctx, index = False,method =pd_writer)
+        # try:
+        #     df_to_write.to_sql('STANDINGS_10', ctx, index = False,method =pd_writer)
+        # except Exception as e:
+        #     print('davar')
+        # success, nchunks, nrows, _ = write_pandas(ctx, df_to_write,  'STANDINGS_10' ,index = False)
         # cur = ctx.cursor()
         # sql = f"select * from {table_to_drop}"
         # cur.execute(sql)

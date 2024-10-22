@@ -1,21 +1,22 @@
-,POSITION,CLUB,MATCHES_PLAYED,WIN,DRAW,LOSS,GOALS_FOR,GOAL_AGANIST,GOAL_DIFFERENCE,POINTS,primary_key
-,,,,,,,,,,,
-0,1,Man United,29,17,7,5,61,36,25,58,Man United
-1,2,Leicester,28,18,2,8,53,32,21,56,Leicester
-2,4,West Ham,29,16,5,8,47,34,13,53,West Ham
-3,4,Chelsea,28,16,5,7,45,25,20,53,Chelsea
-4,5,Everton,31,15,7,9,42,35,7,52,Everton
-5,7,Liverpool,28,15,5,8,51,31,20,50,Liverpool
-6,7,Tottenham,29,15,5,9,58,36,22,50,Tottenham
-7,8,Arsenal,29,14,6,9,43,29,14,48,Arsenal
-8,9,Aston Villa,29,12,6,11,42,36,6,42,Aston Villa
-9,10,Crystal Palace,27,11,6,10,35,45,-10,39,Crystal Palace
-10,12,Leeds,29,11,4,14,46,49,-3,37,Leeds
-11,12,Southampton,29,11,4,14,40,54,-14,37,Southampton
-12,14,Newcastle,30,10,6,14,36,52,-16,36,Newcastle
-13,14,Wolves,28,10,6,12,28,36,-8,36,Wolves
-14,15,Burnley,28,8,9,11,29,34,-5,33,Burnley
-15,16,Brighton & Hove Albion,28,7,10,11,30,34,-4,31,Brighton & Hove Albion
-16,17,Fulham,30,4,9,17,23,42,-19,21,Fulham
-17,18,Sheffield United,30,6,2,22,18,54,-36,20,Sheffield United
-18,19,West Brom,29,3,6,20,25,58,-33,15,West Brom
+,POSITION,CLUB,MATCHES_PLAYED,WIN,DRAW,LOSS,GOALS_FOR,GOALS_AGAINST,GOAL_DIFFERENCE,POINTS
+,,,,,,,,,,
+CLUB,,,,,,,,,,
+Man United,1,Man United,29,17,7,5,61,36,25,58
+Leicester,2,Leicester,28,18,2,8,53,32,21,56
+West Ham,4,West Ham,29,16,5,8,47,34,13,53
+Chelsea,4,Chelsea,28,16,5,7,45,25,20,53
+Everton,5,Everton,31,15,7,9,42,35,7,52
+Liverpool,7,Liverpool,28,15,5,8,51,31,20,50
+Tottenham,7,Tottenham,29,15,5,9,58,36,22,50
+Arsenal,8,Arsenal,29,14,6,9,43,29,14,48
+Aston Villa,9,Aston Villa,29,12,6,11,42,36,6,42
+Crystal Palace,10,Crystal Palace,27,11,6,10,35,45,-10,39
+Leeds,12,Leeds,29,11,4,14,46,49,-3,37
+Southampton,12,Southampton,29,11,4,14,40,54,-14,37
+Newcastle,14,Newcastle,30,10,6,14,36,52,-16,36
+Wolves,14,Wolves,28,10,6,12,28,36,-8,36
+Burnley,15,Burnley,28,8,9,11,29,34,-5,33
+Brighton & Hove Albion,16,Brighton & Hove Albion,28,7,10,11,30,34,-4,31
+Fulham,17,Fulham,30,4,9,17,23,42,-19,21
+Sheffield United,18,Sheffield United,30,6,2,22,18,54,-36,20
+West Brom,19,West Brom,29,3,6,20,25,58,-33,15
