@@ -173,3 +173,4 @@ class snowflake_analysis_class(PandasAnalysisClass):
         df_source = pd.read_sql(f'SELECT * FROM {table_to_drop}', con = ctx)
         assert len(df_source) > 0, 'Table write did not work'
         ctx.close()
+        return "Table wrote on Snowflake location"
