@@ -15,4 +15,4 @@ As addition to requirements document, For to check source data quality and getti
 - (Source data profiling activity output) https://github.com/Giray18/gambling_com_task_solution/blob/main/Python_Test/2024-10-23_profiled_dataframe/profiled_dataframe_2024-10-23.xlsx
 
 ### Details of Solution
--STEP 1 :
+ - STEP 1 :
