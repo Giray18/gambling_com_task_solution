@@ -6,7 +6,6 @@ import time
 import datetime
 import os
 import sys
-sys.path.insert(0, 'C:/Users/Lenovo/Desktop/gambling/gambling_com_task_solution/src')
 
 class PandasAnalysisClass:
     '''A python class that has methods for data profiling and manipulation'''
@@ -44,12 +43,8 @@ class PandasAnalysisClass:
             df_null = pd.DataFrame([null_val_holding_cols],columns = dataframe.columns)
             dataframes_dict['null_val_holding_cols'] = df_null
         except Exception as e:
+            print("The error is: No null values on dataset so an empty dataframe created for  to avoid exception on excel writer// ",e)
             dataframes_dict['null_val_holding_cols'] = pd.DataFrame()
-        # Changing working directory for daily partitioning of output files
-        dir = os.path.join("C:\\", f"{output_location}", f'{datetime.date.today()}_profiled_dataframe')
-        if not os.path.exists(dir):
-            os.mkdir(dir)
-        os.chdir(dir)
         # Writing all dataframes to xlsx file 
         writer = pd.ExcelWriter(f"profiled_dataframe_{datetime.date.today()}.xlsx", engine="xlsxwriter")
         for dataframe_name,dataframe in dataframes_dict.items():
