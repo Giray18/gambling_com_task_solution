@@ -8,7 +8,6 @@ As addition to requirements document, For to check source data quality and getti
 
 ### Important File Locations
 - (.py file for class and methods)  https://github.com/Giray18/gambling_com_task_solution/blob/main/src/data_profiler/pandas_analysis_class.py
-  <BR>
 - (jupyter notebook) https://github.com/Giray18/gambling_com_task_solution/blob/main/Python_Test/task_1_sql.ipynb
 - (source file) https://github.com/Giray18/gambling_com_task_solution/blob/main/Python_Test/Fixtures.csv
 - (requirements) https://github.com/Giray18/gambling_com_task_solution/blob/main/Python_Test/Python_Test_Brief_v1.1.docx
